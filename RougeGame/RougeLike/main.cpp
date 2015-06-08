@@ -5,6 +5,7 @@
 
 #include "Game.h"
 #include "Room.h"
+#include "Player.h"
 
 #define SIZEX 80
 #define SIZEY 60

@@ -16,7 +16,10 @@ public:
 		m_iMaxRooms = maxRooms;
 		m_iMinRooms = minRooms;
 	}
-
+	Tile* GetLevel()
+	{
+		return level;
+	}
 
 private:
 	void PrintLevel();
