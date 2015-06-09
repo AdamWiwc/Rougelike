@@ -5,7 +5,6 @@
 
 #include "Game.h"
 #include "Room.h"
-#include "Player.h"
 
 #define SIZEX 80
 #define SIZEY 60
@@ -22,8 +21,15 @@ int main()
 
 	game.GenerateLevel();
 
-	game.PrintScreen();
+	bool isDead = false;
+	do
+	{
+		game.PrintScreen(hOut);
 
+
+
+	} while (!isDead);
+	
 	return 0;
 }
 

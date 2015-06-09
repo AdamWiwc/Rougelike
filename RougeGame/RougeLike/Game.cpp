@@ -16,8 +16,9 @@ cGame::cGame(unsigned int sizeX, unsigned int sizeY)
 	printf("");
 }
 
-void cGame::PrintScreen()
+void cGame::PrintScreen(HANDLE& hOut)
 {
+	SetConsoleCursorPosition(hOut, { 0, 0 });
 	//Print Hud stuff
 	printf("Hud Stuffs like HP and what not\n");
 
@@ -48,7 +49,7 @@ void cGame::PrintLevel()
 
 void cGame::GenerateLevel()
 {
-	int amountOfRooms = 5;
+	amountOfRooms = 5;
 	int sizeX;
 	int sizeY;
 
@@ -82,7 +83,7 @@ void cGame::GenerateLevel()
 		{
 			room->pos = { RandomNum(0, m_iSizeX - room->m_iRoomSizeX), RandomNum(0, m_iSizeY - room->m_iRoomSizeY) };
 			
-			isColliding = CheckForRoomCollisions(room, amountOfRooms);
+			isColliding = CheckForRoomCollisions(room);
 			if (!isColliding)
 			{
 				/*for (int z = 0; z < room->m_iRoomSizeY; ++z)//better more complicated way, that isnt working... fix later
@@ -100,11 +101,123 @@ void cGame::GenerateLevel()
 			}
 		} while (isColliding);//while the room was not placed in the room
 	}
+	GeneratePaths();
 	delete[] rooms;
 }
 
+void cGame::GeneratePaths()
+{
+	/* Create Paths from room to room
+		->Check for rooms in proximity
+			->if one room is right on top of/to the side of another room create a path regardless of distance
+				->have a random chance to generate paths from the longer paths
+					->create a spider web effect with the paths for more dynamic gameplay
+			->potentially create diagnol paths? if rooms are directly diagnol form one another
+			
+			->check the side to create the path from depending on the room that the path is going to (top, bottom, left, right) 
+				->open a "door" on one side of the room in any position(unless it is a straight path then ensure that it will still be a straight path) 
+				->open a "receiving door" on the room that is being pathed too.
+				->create a corner in the paths then create a path to the corner from each room
+
+		->create walls for the paths
+	*/
+
+	//collision detection logic:
+	/*room->pos.X <= other->pos.X + other->m_iRoomSizeX && room->pos.Y <= other->pos.Y + other->m_iRoomSizeY &&
+				room->pos.X + room->m_iRoomSizeX >= other->pos.X && room->pos.Y + room->m_iRoomSizeY >= other->pos.Y )*/
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		cRoom& curr = rooms[i];
+		for (int z = i + 1; z < amountOfRooms; ++z)
+		{
+			cRoom& other = rooms[z];
+
+			int pathX;
+			int pathY;
+			//on top of eachother (straight path qualifies)
+			if (curr.pos.X < other.pos.X + other.m_iRoomSizeX - 2 && curr.pos.X + curr.m_iRoomSizeX > other.pos.X)
+			{
+				if (curr.pos.X >= other.pos.X)
+				{
+					pathX = RandomNum(curr.pos.X, other.pos.X + other.m_iRoomSizeX);
+				}
+				else
+				{
+					pathX = RandomNum(other.pos.X, curr.pos.X + curr.m_iRoomSizeX);
+				}
+
+				//current room is below the other room
+				if (curr.pos.Y < other.pos.Y)
+				{
+					for (int y = other.pos.Y + other.m_iRoomSizeY; y < curr.pos.Y; ++y)
+					{
+						level[(y * m_iSizeX) + pathX - 1].state = '1';
+						level[(y * m_iSizeX) + pathX].state = '1';//walkableTile
+						level[(y * m_iSizeX) + pathX + 1].state = '1';
+					}
+				}
+				else
+				{
+					for (int y = other.pos.Y + other.m_iRoomSizeY; y < curr.pos.Y; ++y)
+					{
+						level[(y * m_iSizeX) + pathX - 1].state = '#';
+						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile 
+						level[(y * m_iSizeX) + pathX + 1].state = '#';
+					}
+				}
+			}
+
+			//beside eachother
+			if (curr.pos.Y >= other.pos.Y + other.m_iRoomSizeY - 3 || curr.pos.Y + curr.m_iRoomSizeY > other.pos.Y)
+			{
+				if (curr.pos.Y <= other.pos.Y)
+				{
+					pathY = RandomNum(curr.pos.Y, other.pos.Y + other.m_iRoomSizeY);
+				}
+				else
+				{
+					pathY = RandomNum(other.pos.Y, curr.pos.Y + curr.m_iRoomSizeY);
+				}
+
+				//current room is below the other room
+				if (curr.pos.X < other.pos.X)
+				{
+					for (int x = other.pos.X + other.m_iRoomSizeX; x < curr.pos.X; ++x)
+					{
+						level[(pathY - 1) * m_iSizeX + x].state = '#';
+						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
+						level[(pathY + 1) * m_iSizeX + x].state = '#';
+					}
+				}
+				else
+				{
+					for (int x = other.pos.X + other.m_iRoomSizeX; x < curr.pos.X; ++x)
+					{
+						level[(pathY - 1) * m_iSizeX + x].state = '#';
+						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
+						level[(pathY + 1) * m_iSizeX + x].state = '#';
+					}
+				}
+
+			}
+
+		}
+	}
+
+	/*cRoom* closestTo = &rooms[0];//dont know what i was thinking
+	int roomsNearBy = 0;
+	for (int i = 1; i < amountOfRooms; ++i)
+	{
+		cRoom* curr = &rooms[i];
+		if ((curr->pos.X * curr->pos.X) + (curr->pos.Y * curr->pos.Y) < (closestTo->pos.X * closestTo->pos.X) + (closestTo->pos.Y * closestTo->pos.Y))
+		{
+			closestTo = &rooms[i];
+		}
+	}*/
+}
+
 //returns false if no collisions are detected
-bool cGame::CheckForRoomCollisions(cRoom* room, int amountOfRooms)
+bool cGame::CheckForRoomCollisions(cRoom* room)
 {
 	for (int i = 0; i < amountOfRooms; ++i)
 	{
@@ -119,3 +232,8 @@ bool cGame::CheckForRoomCollisions(cRoom* room, int amountOfRooms)
 	
 	return false;
 }
+
+
+
+
+

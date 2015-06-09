@@ -7,18 +7,20 @@ class cGame
 {
 public:
 	cGame(unsigned int sizeX, unsigned int sizeY);
-	void PrintScreen();
+	void PrintScreen(HANDLE& hOut);
 
 	void GenerateLevel();
-	bool CheckForRoomCollisions(cRoom* room, int amountOfRooms);
+	void GeneratePaths();
+	bool CheckForRoomCollisions(cRoom* room);
 	void SetDifficulty(int maxRooms, int minRooms)
 	{
 		m_iMaxRooms = maxRooms;
 		m_iMinRooms = minRooms;
 	}
-	Tile* GetLevel()
+
+	Tile& GetTile(const int x, const int y) const
 	{
-		return level;
+		return level[(y * m_iSizeX) + x];
 	}
 
 private:
@@ -26,7 +28,7 @@ private:
 
 	unsigned int m_iSizeX;
 	unsigned int m_iSizeY;
-
+	unsigned int amountOfRooms;
 	Tile* level; //level
 	cRoom* rooms; //array of rooms
 	int m_iMaxRooms;
