@@ -1,0 +1,7 @@
+*.obj
+RougeGame/nsoleApplication2.v12.suo
+*.obj
+*.tlog
+RougeGame/RougeLike/Debug/RougeLike.tlog/cl.command.1.tlog
+*.idb
+RougeGame/RougeLike/Debug/vc120.pdb
