@@ -1,10 +1,13 @@
 #include "Player.h"
 
+//-----------------------------------------------------------
+//	Overall entity stuff
+//-----------------------------------------------------------
 
-void Player::Move(byte dir, class cGame game)
+void cEntity::Move(byte dir, class cGame game)
 {
 	//directions: 1: north, 2: East, 3: South, 4: West
-	COORD newCords = plyrCords;
+	COORD newCords = m_Cords;
 
 	
 	switch (dir)
@@ -28,7 +31,7 @@ void Player::Move(byte dir, class cGame game)
 
 	if (true) //check with the map to see if those cors are free.
 	{
-		plyrCords = newCords;
+		m_Cords = newCords;
 	}
 	else
 	{
@@ -36,35 +39,101 @@ void Player::Move(byte dir, class cGame game)
 		//send "Something blocks your way."
 	}
 }
-
-bool Player::TakeDamage(int damage)
+COORD cEntity::GetCords()
 {
-	health -= damage;
-
-	if (health <= 0)
-	{
-		//player has died. do whatever we are going to do.
-		return false;
-	}
-	else if (damage >= 0)
-	{
-		//Print to event log: "Ouch!"
-	}
-	else
-	{
-		//print to event log: "You feel rejuvenated."
-		if (health > MAXHEALTH)
-			health = MAXHEALTH;
-	}
-	return true;
+	return (m_Cords);
+}
+void cEntity::SetCords(COORD newCords)
+{
+	m_Cords = newCords;
 }
 
-COORD Player::GetCords()
+char cEntity::getCharRep()
 {
-	return (plyrCords);
+	return m_charRep;
 }
 
-void Player::SetCords(COORD newCords)
+//-----------------------------------------------------------
+//	Player stuff
+//-----------------------------------------------------------
+
+void cPlayer::pickUpGold(int gold)
 {
-	plyrCords = newCords;
+	m_gold += gold;
+	//send message to event system "You found X gold, wow shiny"
+}
+void cPlayer::gainInLevel(int XpGained)
+{
+	m_XP += XpGained;
+
+	if(m_XP >= m_XpToNext) //player has leveled up
+	{
+		//Send Message "You feel Stronger now.";
+		m_iDamage++;
+		m_maxHealth += 10;
+		TakeDamage(-50);
+	}
+}
+void cPlayer::TakeDamage(int damage)
+{
+	m_iHealth -= damage;
+
+	if(m_iHealth > m_maxHealth)
+	{
+		m_iHealth = m_maxHealth;
+	}
+
+	if (m_iHealth <= 0)
+	{
+		//do the death stuff
+	}
+	return;
+}
+
+int cPlayer::getHeath()
+{
+	return m_iHealth;
+}
+int cPlayer::getDamage()
+{
+	return m_iDamage;
+}
+std::string cPlayer::GetName()
+{
+	return m_name;
+}
+unsigned int cPlayer::GetXP()
+{
+	return m_XP;
+}
+unsigned int cPlayer::GetLevel()
+{
+	return m_level;
+}
+unsigned int cPlayer::GetGold()
+{
+	return m_gold;
+}
+unsigned int cPlayer::GetXpToNext()
+{
+	return m_XpToNext;
+}
+int cPlayer::GetMaxHealth()
+{
+	return m_maxHealth;
+}
+
+//------------------------------------------------------------
+// Enemy Stuff
+//-----------------------------------------------------------
+
+void cEnemy::TakeDamage(int damage)
+{
+	m_iHealth -= damage;
+
+	if (m_iHealth <= 0)
+	{
+		//do the death stuff
+	}
+	return;
 }
