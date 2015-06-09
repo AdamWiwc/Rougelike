@@ -15,3 +15,7 @@ RougeGame/Rouge++.sdf
 RougeGame/Rouge++.v12.suo
 *.vcxproj
 RougeGame/Rouge++/Rouge++.vcxproj.filters
+*.exe
+RougeGame/Debug/Rouge++.pdb
+*.log
+RougeGame/Rouge++/Debug/vc120.pdb

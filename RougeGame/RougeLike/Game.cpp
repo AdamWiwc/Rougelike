@@ -5,7 +5,9 @@
 
 int RandomNum(const int min, const int max)
 {
-	return rand() % (max - min) + min;
+	if (max > min)
+		return rand() % (max - min) + min;
+	return min;
 }
 
 cGame::cGame(unsigned int sizeX, unsigned int sizeY)
@@ -101,9 +103,13 @@ void cGame::GenerateLevel()
 			}
 		} while (isColliding);//while the room was not placed in the room
 	}
+
+
+	//GenerateStraightPaths();
 	GeneratePaths();
 	delete[] rooms;
 }
+
 
 void cGame::GeneratePaths()
 {
@@ -134,55 +140,107 @@ void cGame::GeneratePaths()
 
 			int pathX;
 			int pathY;
-			//on top of eachother (straight path qualifies)
-			if (curr.pos.X < other.pos.X + other.m_iRoomSizeX - 2 && curr.pos.X + curr.m_iRoomSizeX > other.pos.X)
+
+			//check to make sure no other rooms are in between this one and the other
+			for (int c = 0; c < amountOfRooms; ++c)
 			{
+				cRoom& temp = rooms[i];
+				if (&curr != &temp && &other != &temp)
+				{
+					if (curr.pos.X < temp.pos.X && other.pos.X > temp.pos.X)
+					{
+
+					}
+				}
+			}
+
+			//on top of eachother (straight path qualifies)
+			if (curr.pos.X < other.pos.X + other.m_iRoomSizeX && curr.pos.X + curr.m_iRoomSizeX > other.pos.X)
+			{
+				int minVal = -1;
+				int maxVal = -1;
+				//check to make sure no other rooms are in between this one and the other
+				for (int c = 0; c < amountOfRooms; ++c)
+				{
+					cRoom& temp = rooms[i];
+					if (&curr != &temp && &other != &temp)
+					{
+						if (curr.pos.X + curr.m_iRoomSizeX >= temp.pos.X && curr.pos.X <= temp.pos.X + temp.m_iRoomSizeX &&
+							other.pos.X + other.m_iRoomSizeX >= temp.pos.X && other.pos.X <= temp.pos.X + temp.m_iRoomSizeX)
+						{//temp room is inbetween the two rooms
+							if (temp.pos.X < curr.pos.X || temp.pos.X < other.pos.X)
+							{
+								minVal = temp.pos.X + temp.m_iRoomSizeX;
+							}
+						}
+					}
+				}
+
 				if (curr.pos.X >= other.pos.X)
 				{
-					pathX = RandomNum(curr.pos.X, other.pos.X + other.m_iRoomSizeX);
+					pathX = RandomNum((minVal == -1) ? curr.pos.X + 1 : minVal, (maxVal == -1) ? other.pos.X + other.m_iRoomSizeX - 1 : maxVal);
 				}
 				else
 				{
-					pathX = RandomNum(other.pos.X, curr.pos.X + curr.m_iRoomSizeX);
+					pathX = RandomNum((minVal == -1) ? other.pos.X + 1 : minVal, (maxVal == -1) ? curr.pos.X + curr.m_iRoomSizeX - 1 : maxVal);
 				}
 
 				//current room is below the other room
 				if (curr.pos.Y < other.pos.Y)
 				{
-					for (int y = other.pos.Y + other.m_iRoomSizeY; y < curr.pos.Y; ++y)
+					for (int y = curr.pos.Y + curr.m_iRoomSizeY - 1; y <= curr.pos.Y; ++y)
 					{
 						level[(y * m_iSizeX) + pathX - 1].state = '1';
-						level[(y * m_iSizeX) + pathX].state = '1';//walkableTile
+						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile
 						level[(y * m_iSizeX) + pathX + 1].state = '1';
 					}
 				}
 				else
 				{
-					for (int y = other.pos.Y + other.m_iRoomSizeY; y < curr.pos.Y; ++y)
+					for (int y = other.pos.Y + other.m_iRoomSizeY - 1; y < curr.pos.Y + 1; ++y)
 					{
-						level[(y * m_iSizeX) + pathX - 1].state = '#';
+						level[(y * m_iSizeX) + pathX - 1].state = '2';
 						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile 
-						level[(y * m_iSizeX) + pathX + 1].state = '#';
+						level[(y * m_iSizeX) + pathX + 1].state = '2';
 					}
 				}
 			}
 
 			//beside eachother
-			if (curr.pos.Y >= other.pos.Y + other.m_iRoomSizeY - 3 || curr.pos.Y + curr.m_iRoomSizeY > other.pos.Y)
+			else if (curr.pos.Y < other.pos.Y + other.m_iRoomSizeY && curr.pos.Y + curr.m_iRoomSizeY > other.pos.Y)
 			{
+				int minVal = -1;
+				int maxVal = -1;
+				//check to make sure no other rooms are in between this one and the other
+				for (int c = 0; c < amountOfRooms; ++c)
+				{
+					cRoom& temp = rooms[i];
+					if (&curr != &temp && &other != &temp)
+					{
+						if (curr.pos.Y + curr.m_iRoomSizeY >= temp.pos.Y && curr.pos.Y <= temp.pos.Y + temp.m_iRoomSizeY &&
+							other.pos.Y + other.m_iRoomSizeY >= temp.pos.Y && other.pos.Y <= temp.pos.Y + temp.m_iRoomSizeY)
+						{//temp room is inbetween the two rooms
+							if (temp.pos.Y < curr.pos.Y || temp.pos.Y < other.pos.Y)
+							{
+								minVal = temp.pos.Y + temp.m_iRoomSizeY;
+							}
+						}
+					}
+				}
+
 				if (curr.pos.Y <= other.pos.Y)
 				{
-					pathY = RandomNum(curr.pos.Y, other.pos.Y + other.m_iRoomSizeY);
+					pathY = RandomNum(other.pos.Y + 1, curr.pos.Y + curr.m_iRoomSizeY - 1);
 				}
 				else
 				{
-					pathY = RandomNum(other.pos.Y, curr.pos.Y + curr.m_iRoomSizeY);
+					pathY = RandomNum(curr.pos.Y + 1, other.pos.Y + other.m_iRoomSizeY - 1);
 				}
 
 				//current room is below the other room
 				if (curr.pos.X < other.pos.X)
 				{
-					for (int x = other.pos.X + other.m_iRoomSizeX; x < curr.pos.X; ++x)
+					for (int x = other.pos.X + other.m_iRoomSizeX - 1; x < curr.pos.X + 1; ++x)
 					{
 						level[(pathY - 1) * m_iSizeX + x].state = '#';
 						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
@@ -191,7 +249,7 @@ void cGame::GeneratePaths()
 				}
 				else
 				{
-					for (int x = other.pos.X + other.m_iRoomSizeX; x < curr.pos.X; ++x)
+					for (int x = other.pos.X + other.m_iRoomSizeX - 1; x < curr.pos.X + 1; ++x)
 					{
 						level[(pathY - 1) * m_iSizeX + x].state = '#';
 						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
@@ -200,7 +258,6 @@ void cGame::GeneratePaths()
 				}
 
 			}
-
 		}
 	}
 
@@ -234,6 +291,109 @@ bool cGame::CheckForRoomCollisions(cRoom* room)
 }
 
 
+/*===============================
+============Path Gen============*/
+
+void cGame::GenerateStraightPaths()
+{
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		int pathX = 0;
+		int pathY = 0;
+		cRoom& curr = rooms[i];
+		for (int z = i + 1; z < amountOfRooms; ++z)
+		{
+			cRoom& other = rooms[z];
+			if (&curr != &other)
+			{
+				//On top of eachother
+				if (curr.pos.X < other.pos.X + other.m_iRoomSizeX && curr.pos.X + curr.m_iRoomSizeX > other.pos.X)
+				{
+					if (curr.pos.X >= other.pos.X)
+					{
+						pathX = RandomNum(curr.pos.X + 1, other.pos.X + other.m_iRoomSizeX - 1);
+					}
+					else
+					{
+						pathX = RandomNum(other.pos.X + 1, curr.pos.X + curr.m_iRoomSizeX - 1);
+					}
+				}
+
+				if (curr.pos.Y < other.pos.Y)
+				{
+					for (int y = curr.pos.Y + curr.m_iRoomSizeY - 1; y < other.pos.Y + 1; ++y)
+					{
+						level[(y * m_iSizeX) + pathX - 1].state = '1';
+						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile
+						level[(y * m_iSizeX) + pathX + 1].state = '1';
+					}
+				}
+				else
+				{
+					for (int y = other.pos.Y + other.m_iRoomSizeY - 1; y < curr.pos.Y + 1; ++y)
+					{
+						level[(y * m_iSizeX) + pathX - 1].state = '2';
+						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile 
+						level[(y * m_iSizeX) + pathX + 1].state = '2';
+					}
+				}
+
+				//beside eachother
+				if (curr.pos.Y < other.pos.Y + other.m_iRoomSizeY && curr.pos.Y + curr.m_iRoomSizeY > other.pos.Y)
+				{
+					if (curr.pos.Y >= other.pos.Y)
+					{
+						pathY = RandomNum(curr.pos.Y + 1, other.pos.Y + other.m_iRoomSizeY - 1);
+					}
+					else
+					{
+						pathY = RandomNum(other.pos.Y + 1, curr.pos.Y + curr.m_iRoomSizeY - 1);
+					}
+				}
+
+				if (curr.pos.X < other.pos.X)
+				{
+					for (int x = curr.pos.X + curr.m_iRoomSizeX - 1; x < other.pos.X + 1; ++x)
+					{
+						level[(pathY - 1) * m_iSizeX + x].state = '3';
+						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
+						level[(pathY + 1) * m_iSizeX + x].state = '3';
+					}
+				}
+				else
+				{
+					for (int x = other.pos.X + other.m_iRoomSizeX - 1; x < curr.pos.X + 1; ++x)
+					{
+						level[(pathY - 1) * m_iSizeX + x].state = '4';
+						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
+						level[(pathY + 1) * m_iSizeX + x].state = '4';
+					}
+				}
+			}
+		}
+	}
+}
 
 
+void cGame::GenerateCornerPaths()
+{
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		cRoom& curr = rooms[i];
+		for (int z = i + 1; z < amountOfRooms; ++z)
+		{
+			cRoom& other = rooms[z];
+			if (&curr != &other)
+			{
+
+			}
+		}
+	}
+}
+
+
+bool CheckForRoomIntersections(cRoom* rooms, int amountOfRooms)
+{
+	return true;
+}
 

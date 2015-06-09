@@ -27,10 +27,31 @@ void cRoom::Init(int sizeX, int sizeY)
 
 void cRoom::GenerateRoom()
 {
-	//create walls
-	//and opens a 'door' for a path 
-	//Will Place Random Objects in the room for the game (what ever you guys decide you want, keys, chests or other things)
-	
+	/*
+		Random Decorative objects
+			Shrines
+			Wells
+			boxes
+			chairs
+			tables
+			furniture
+
+			Example:
+
+			##############################
+			\
+			\		c c c c
+					=======
+					c c c c
+			\
+			\
+
+
+		Traps that damage you
+		Treasure chests
+		Secret walls (With treasures inside)
+		Secret Peter Chan ascii shrine
+	*/
 	for (int i = 0; i < m_iRoomSizeX; ++i)
 	{
 		m_room[i].state = '#';// Horizontal walls (TOP and BOTTOMW)

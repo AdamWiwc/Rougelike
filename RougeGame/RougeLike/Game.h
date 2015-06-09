@@ -10,7 +10,12 @@ public:
 	void PrintScreen(HANDLE& hOut);
 
 	void GenerateLevel();
-	void GeneratePaths();
+	void GeneratePaths();//delete this!!!
+
+	void GenerateStraightPaths();
+	void GenerateCornerPaths();
+	
+	bool CheckForRoomIntersections(cRoom& rooms, int amountOfRooms);//path going through a room
 	bool CheckForRoomCollisions(cRoom* room);
 	void SetDifficulty(int maxRooms, int minRooms)
 	{
