@@ -9,16 +9,16 @@ void Player::Move(byte dir, class cGame game)
 	
 	switch (dir)
 	{
-	case 1:
+	case VK_UP:
 		newCords.Y--;
 		break;
-	case 2:
+	case VK_RIGHT:
 		newCords.X++;
 		break;
-	case 3:
+	case VK_DOWN:
 		newCords.Y++;
 		break;
-	case 4:
+	case VK_LEFT:
 		newCords.X--;
 		break;
 	default:

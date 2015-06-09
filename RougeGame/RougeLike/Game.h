@@ -35,6 +35,4 @@ private:
 	int m_iMinRooms;
 };
 
-
-
 #endif //DISPLAY_H
