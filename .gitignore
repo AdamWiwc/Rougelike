@@ -9,3 +9,9 @@ RougeGame/RougeLike/Debug/vc120.pdb
 RougeGame/RougeLike/Debug/vc120.idb
 RougeGame/Debug/RougeLike.exe
 *.ilk
+*.opensdf
+RougeGame/Rouge++.sdf
+*.sln
+RougeGame/Rouge++.v12.suo
+*.vcxproj
+RougeGame/Rouge++/Rouge++.vcxproj.filters
