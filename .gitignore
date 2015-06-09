@@ -5,3 +5,7 @@ RougeGame/nsoleApplication2.v12.suo
 RougeGame/RougeLike/Debug/RougeLike.tlog/cl.command.1.tlog
 *.idb
 RougeGame/RougeLike/Debug/vc120.pdb
+*.lastbuildstate
+RougeGame/RougeLike/Debug/vc120.idb
+RougeGame/Debug/RougeLike.exe
+*.ilk
