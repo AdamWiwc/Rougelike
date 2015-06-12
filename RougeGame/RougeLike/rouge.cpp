@@ -20,20 +20,36 @@ PrintMessageLog(game_state *GameState)
 internal void
 ProcessKeyboardInput(game_state *GameState)
 {
-	uint8 LastKeyPressed = NULL;
-	// NOTE(jesse): Make sure you don't skip the getchar as it picks up
-	// the [enter] after the input normally
-	//while (((LastKeyPressed = getchar()) != '\n') && LastKeyPressed != EOF);
+	int32 LastKeyPressed = NULL;
+
 	LastKeyPressed = _getch();
-	Assert(LastKeyPressed);
-	if (LastKeyPressed == 'a')
+	// NOTE(jesse): Arrow Key Input
+	if (LastKeyPressed == 0 || LastKeyPressed == 224)	{
+		switch (_getch())		{
+		case 72:
+			// NOTE(jesse): code for arrow up			UpdateMessageLog(GameState, "Moved North!");
+			break;		case 80:
+			// NOTE(jesse): code for arrow down			UpdateMessageLog(GameState, "Moved South!");
+			break;
+		case 75:
+			// NOTE(jesse): code for arrow right			UpdateMessageLog(GameState, "Moved West!");
+			break;
+		case 77:
+			// NOTE(jesse): code for arrow left			UpdateMessageLog(GameState, "Moved East!");
+			break;		}	}
+	else
 	{
-		UpdateMessageLog(GameState, "Attacked");
+		// NOTE(jesse): Other input
+		if (LastKeyPressed == 'a')
+		{
+			UpdateMessageLog(GameState, "Attacked");
+		}
+		else if (LastKeyPressed == 'd')
+		{
+			UpdateMessageLog(GameState, "Blocked");
+		}
 	}
-	if (LastKeyPressed == 'd')
-	{
-		UpdateMessageLog(GameState, "Blocked");
-	}
+
 	// NOTE(jesse): Add more input here
 }
 
