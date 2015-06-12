@@ -40,6 +40,7 @@ struct game_state
 	bool32 IsInitialized;
 	cPlayer *Player;
 	std::string MessageLog;
+	cGame *CurrentLevel;
 };
 
 #define ROUGE_H

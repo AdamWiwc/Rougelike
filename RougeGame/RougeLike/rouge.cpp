@@ -7,6 +7,12 @@ UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 	// NOTE(jesse): Print Action log at the bottom	
 	// NOTE(jesse): Delete oldest message
 	GameState->MessageLog.erase(0, GameState->MessageLog.find("\n") + 1);
+#if 1
+	while (MessageToHandle.size() < 80)
+	{
+		MessageToHandle += " ";
+	}
+#endif
 	GameState->MessageLog += MessageToHandle;
 	GameState->MessageLog += "\n";
 }
@@ -14,6 +20,7 @@ UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 internal void
 PrintMessageLog(game_state *GameState)
 {
+
 	printf("%s", GameState->MessageLog.c_str());
 }
 
@@ -42,7 +49,7 @@ ProcessKeyboardInput(game_state *GameState)
 		// NOTE(jesse): Other input
 		if (LastKeyPressed == 'a')
 		{
-			UpdateMessageLog(GameState, "Attacked");
+			UpdateMessageLog(GameState, "Attacked the goblin for 20 damage! Critical Hit! KO, the troll has died");
 		}
 		else if (LastKeyPressed == 'd')
 		{

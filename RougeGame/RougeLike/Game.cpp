@@ -31,7 +31,6 @@ void cGame::PrintScreen(HANDLE& hOut)
 }
 
 
-
 void cGame::PrintLevel()
 {
 	for (int y = 0; y < m_iSizeY; ++y)

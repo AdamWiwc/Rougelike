@@ -13,34 +13,38 @@ int
 main()
 {
 	game_state GameState;
-	
+	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	srand(time(NULL));
+
+
 	GameState.IsInitialized = false;
 	bool32 Running = true;
 	while(Running)
-	{
+	{	
 		if (!GameState.IsInitialized)
 		{
-			// HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-			// SetConsoleCursorPosition(hOut, {0, 0});
-			// srand(time(NULL));
 			GameState = {};
 			GameState.MessageLog = ("\n\n\n");
 			GameState.Player;
 
 			#define SIZEX 80
-			#define SIZEY 60
-			cGame game(SIZEX, SIZEY);
-			// game.GenerateLevel();
+			#define SIZEY 25
+			GameState.CurrentLevel = new cGame(SIZEX, SIZEY);
+			GameState.CurrentLevel->GenerateLevel();
 
 			GameState.IsInitialized = true;
 		}
 
-		system("cls");
-
+		//system("cls");
+		SetConsoleCursorPosition(hOut, { 0, 0 });
 		PrintStats(&GameState);
 
 		// NOTE(jesse): Draw the game in the center of the screen
-		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n\n\n\n\n\n\n\n			GAMESCREEN\n\n\n\n\n\n\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
+		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
+
+		GameState.CurrentLevel->PrintLevel();
+
+		printf("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 		
 		PrintMessageLog(&GameState);
 

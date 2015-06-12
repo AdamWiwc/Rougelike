@@ -8,6 +8,7 @@ class cGame
 public:
 	cGame(unsigned int sizeX, unsigned int sizeY);
 	void PrintScreen(HANDLE& hOut);
+	void PrintScreen();
 
 	void GenerateLevel();
 	void GeneratePaths();//delete this!!!
@@ -28,8 +29,8 @@ public:
 		return level[(y * m_iSizeX) + x];
 	}
 
-private:
 	void PrintLevel();
+private:
 
 	unsigned int m_iSizeX;
 	unsigned int m_iSizeY;
