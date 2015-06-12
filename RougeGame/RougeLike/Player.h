@@ -66,16 +66,22 @@ class cEnemy : public cEntity
 {
 public:
 
-	cEnemy()
-	{}
+	cEnemy(int a = 1) : level(a)
+	{
+		m_charRep = 'G';
+	}
 	~cEnemy()
 	{}
+
 	void Path(class cGame game);
 	void TakeDamage(int damage);
+	unsigned int GetXp();
+	unsigned int GetGold();
 
 
-protected:
-
+private:
+	unsigned int level;
+	
 	
 	
 

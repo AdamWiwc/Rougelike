@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <stdlib.h>
 
 //-----------------------------------------------------------
 //	Overall entity stuff
@@ -136,4 +137,23 @@ void cEnemy::TakeDamage(int damage)
 		//do the death stuff
 	}
 	return;
+}
+
+void cEnemy::Path(class cGame game)
+{
+
+}
+
+unsigned int cEnemy::GetXp()
+{
+	unsigned int xp = 1 << level;
+	return xp;
+}
+
+unsigned int cEnemy::GetGold()
+{
+	unsigned int gold;
+	gold = (rand() % 8) * level;
+	return gold;
+
 }
