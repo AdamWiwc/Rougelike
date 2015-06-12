@@ -40,12 +40,11 @@ main()
 		PrintStats(&GameState);
 
 		// NOTE(jesse): Draw the game in the center of the screen
+		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n\n\n\n\n\n\n\n			GAMESCREEN\n\n\n\n\n\n\n\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 		
-		ProcessKeyboardInput(&GameState);
-
 		PrintMessageLog(&GameState);
 
-		system("pause");
+		ProcessKeyboardInput(&GameState);
 	}
 
 	return 0;
