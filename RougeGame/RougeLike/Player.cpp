@@ -93,7 +93,8 @@ void cPlayer::TakeDamage(int damage)
 
 int cPlayer::getHeath()
 {
-	return m_iHealth;
+	return 0;
+	//return m_iHealth;
 }
 int cPlayer::getDamage()
 {
@@ -101,27 +102,33 @@ int cPlayer::getDamage()
 }
 std::string cPlayer::GetName()
 {
-	return m_name;
+	return "John";
+	//return m_name;
 }
 unsigned int cPlayer::GetXP()
 {
-	return m_XP;
+	return 0;
+	//return m_XP;
 }
 unsigned int cPlayer::GetLevel()
 {
-	return m_level;
+	return 0;
+	//return m_level;
 }
 unsigned int cPlayer::GetGold()
 {
-	return m_gold;
+	return 0;
+	//return m_gold;
 }
 unsigned int cPlayer::GetXpToNext()
 {
-	return m_XpToNext;
+	return 0;
+//	return m_XpToNext;
 }
 int cPlayer::GetMaxHealth()
 {
-	return m_maxHealth;
+	return 0;
+	//return m_maxHealth;
 }
 
 //------------------------------------------------------------

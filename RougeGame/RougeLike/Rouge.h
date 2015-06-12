@@ -31,5 +31,16 @@ typedef float real32;
 // NOTE(jesse): Doubles are 64 bits wide
 typedef double real64;
 
+//
+//
+//
+
+struct game_state
+{
+	bool32 IsInitialized;
+	cPlayer *Player;
+	std::string MessageLog;
+};
+
 #define ROUGE_H
 #endif
