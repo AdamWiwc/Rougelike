@@ -9,7 +9,11 @@ UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 	GameState->MessageLog.erase(0, GameState->MessageLog.find("\n") + 1);
 	GameState->MessageLog += MessageToHandle;
 	GameState->MessageLog += "\n";
+}
 
+internal void
+PrintMessageLog(game_state *GameState)
+{
 	printf("%s", GameState->MessageLog.c_str());
 }
 

@@ -43,6 +43,8 @@ main()
 		
 		ProcessKeyboardInput(&GameState);
 
+		PrintMessageLog(&GameState);
+
 		system("pause");
 	}
 
