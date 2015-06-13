@@ -1,6 +1,7 @@
 #include "rouge.h"
 #include <conio.h>
-
+#include <stdio.h>
+#include <string>
 internal void
 UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 {
@@ -20,7 +21,6 @@ UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 internal void
 PrintMessageLog(game_state *GameState)
 {
-
 	printf("%s", GameState->MessageLog.c_str());
 }
 
@@ -31,19 +31,28 @@ ProcessKeyboardInput(game_state *GameState)
 
 	LastKeyPressed = _getch();
 	// NOTE(jesse): Arrow Key Input
-	if (LastKeyPressed == 0 || LastKeyPressed == 224)	{
-		switch (_getch())		{
+	if (LastKeyPressed == 0 || LastKeyPressed == 224)
+	{
+		switch (_getch())
+		{
 		case 72:
-			// NOTE(jesse): code for arrow up			UpdateMessageLog(GameState, "Moved North!");
-			break;		case 80:
-			// NOTE(jesse): code for arrow down			UpdateMessageLog(GameState, "Moved South!");
+			// NOTE(jesse): code for arrow up
+			UpdateMessageLog(GameState, "Moved North!");
+			break;
+		case 80:
+			// NOTE(jesse): code for arrow down
+			UpdateMessageLog(GameState, "Moved South!");
 			break;
 		case 75:
-			// NOTE(jesse): code for arrow right			UpdateMessageLog(GameState, "Moved West!");
+			// NOTE(jesse): code for arrow right
+			UpdateMessageLog(GameState, "Moved West!");
 			break;
 		case 77:
-			// NOTE(jesse): code for arrow left			UpdateMessageLog(GameState, "Moved East!");
-			break;		}	}
+			// NOTE(jesse): code for arrow left
+			UpdateMessageLog(GameState, "Moved East!");
+			break;
+		}
+	}
 	else
 	{
 		// NOTE(jesse): Other input

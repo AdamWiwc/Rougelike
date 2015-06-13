@@ -1,22 +1,29 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
+#include <vector>
 #include "Room.h"
 
+class cPlayer;
 class cGame
 {
 public:
-	cGame(unsigned int sizeX, unsigned int sizeY);
-	void PrintScreen(HANDLE& hOut);
-	void PrintScreen();
+	cGame(int sizeX, int sizeY);
+	void PrintLevel(cPlayer& player);
 
-	void GenerateLevel();
-	void GeneratePaths();//delete this!!!
+	void GenerateLevel(cPlayer& player);
+	void GeneratePaths();
 
-	void GenerateStraightPaths();
-	void GenerateCornerPaths();
-	
-	bool CheckForRoomIntersections(cRoom& rooms, int amountOfRooms);//path going through a room
+	std::vector<cRoom*> FindValidHorRooms(cRoom* currentRoom);
+	std::vector<cRoom*> FindValidVerRooms(cRoom* currentRoom);
+
+	bool GetHorPathableRange(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range);
+	bool GetVerPathableRange(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range);
+
+	bool CheckForHorRoomPathCollisions(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range);
+	bool CheckForVerRoomPathCollisions(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range);
+
+	//bool CheckForRoomIntersections(cRoom& rooms, int amountOfRooms);//path going through a room
 	bool CheckForRoomCollisions(cRoom* room);
 	void SetDifficulty(int maxRooms, int minRooms)
 	{
@@ -29,12 +36,15 @@ public:
 		return level[(y * m_iSizeX) + x];
 	}
 
-	void PrintLevel();
+	Tile& GetTile(const int xy) const
+	{
+		return level[xy];
+	}
 private:
 
-	unsigned int m_iSizeX;
-	unsigned int m_iSizeY;
-	unsigned int amountOfRooms;
+	int m_iSizeX;
+	int m_iSizeY;
+	int amountOfRooms;
 	Tile* level; //level
 	cRoom* rooms; //array of rooms
 	int m_iMaxRooms;

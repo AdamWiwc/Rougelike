@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 #include "Game.h"
 #include "Room.h"
@@ -9,13 +10,13 @@
 #include "rouge.h"
 #include "rouge.cpp"
 
-int 
-main()
+int main()
 {
 	game_state GameState;
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 	srand(time(NULL));
 
+	cPlayer* player = new cPlayer();
 
 	GameState.IsInitialized = false;
 	bool32 Running = true;
@@ -30,7 +31,7 @@ main()
 			#define SIZEX 80
 			#define SIZEY 25
 			GameState.CurrentLevel = new cGame(SIZEX, SIZEY);
-			GameState.CurrentLevel->GenerateLevel();
+			GameState.CurrentLevel->GenerateLevel(*player);
 
 			GameState.IsInitialized = true;
 		}
@@ -42,7 +43,7 @@ main()
 		// NOTE(jesse): Draw the game in the center of the screen
 		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 
-		GameState.CurrentLevel->PrintLevel();
+		GameState.CurrentLevel->PrintLevel(*player);
 
 		printf("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 		

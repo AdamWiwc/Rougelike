@@ -1,5 +1,5 @@
 #include "Room.h"
-
+#include "Player.h"
 #include <stdio.h>
 cRoom::cRoom()
 {
@@ -65,11 +65,8 @@ void cRoom::GenerateRoom()
 	}
 }
 
-void cRoom::PutPlayerInRoom()
+//puts player in the designated room
+void cRoom::PutPlayerInRoom(cPlayer& player)
 {
-	int pos = m_iRoomSizeX + 3;
-	if (m_room[pos].state == ' ')//checks the position to make sure there is nothing else in it
-	{
-		m_room[pos].state = 'P';//puts the player in a random position in the room;
-	}
+	player.SetCords({rand() % (m_iRoomSizeX - 1) + 1 + pos.X, rand() % (m_iRoomSizeY - 1) + 1 + pos.Y});
 }

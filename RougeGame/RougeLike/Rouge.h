@@ -1,6 +1,6 @@
 #ifndef ROUGE_H
 #include <stdint.h>
-
+#include "Player.h"
 // NOTE(jesse): Statics can be many things based on where they are placed, so we define these for ease of use
 #define internal static
 #define local_persist static

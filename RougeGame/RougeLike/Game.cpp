@@ -2,45 +2,47 @@
 #include <stdio.h>
 
 #include "Game.h"
+#include "Player.h"
 
+#include <assert.h>
 int RandomNum(const int min, const int max)
 {
+	assert(min <= max);
 	if (max > min)
 		return rand() % (max - min) + min;
 	return min;
 }
 
-cGame::cGame(unsigned int sizeX, unsigned int sizeY)
+int RandomNum(std::pair<int, int> range)
+{
+	assert(range.first <= range.second);
+	if (range.first != range.second)
+		return rand() % (range.second - range.first) + range.first;
+	return range.first;
+}
+cGame::cGame(int sizeX, int sizeY)
 	: m_iSizeX(sizeX)
 	, m_iSizeY(sizeY)
 {
 	level = new Tile[m_iSizeX * m_iSizeY];
-	printf("");
-}
-
-void cGame::PrintScreen(HANDLE& hOut)
-{
-	SetConsoleCursorPosition(hOut, { 0, 0 });
-	//Print Hud stuff
-	printf("Hud Stuffs like HP and what not\n");
-
-	PrintLevel();//print level
-
-	//print other hud stuff
-	printf("Other Hud Stuffs like action print outs??? maybe...\n");
 }
 
 
-void cGame::PrintLevel()
+void cGame::PrintLevel(cPlayer& player)
 {
 	for (int y = 0; y < m_iSizeY; ++y)
 	{
 		for (int x = 0; x < m_iSizeX; ++x)
 		{
+			COORD& pPos = player.GetCords();
 			Tile tile = level[(m_iSizeX * y) + x];
-			//if (tile.IsVisible)
+			if (pPos.X == x && y == pPos.Y)
 			{
-				//tile.IsRevealed = true;
+				printf("%c", player.getCharRep());
+			}
+			else if (true || tile.IsVisible)
+			{
+				tile.IsRevealed = true;
 				printf("%c", tile.state);
 			}
 		}
@@ -48,7 +50,7 @@ void cGame::PrintLevel()
 	}
 }
 
-void cGame::GenerateLevel()
+void cGame::GenerateLevel(cPlayer& player)
 {
 	amountOfRooms = 5;
 	int sizeX;
@@ -65,7 +67,7 @@ void cGame::GenerateLevel()
 		rooms[i].GenerateRoom();
 	}
 
-	rooms[0].PutPlayerInRoom();//puts player in the first room; 
+	
 
 	//TODO:
 		//Put the player in one of the rooms <<<
@@ -102,297 +104,232 @@ void cGame::GenerateLevel()
 			}
 		} while (isColliding);//while the room was not placed in the room
 	}
-
-
-	//GenerateStraightPaths();
 	GeneratePaths();
+	rooms[0].PutPlayerInRoom(player);//puts player in the first room; 
 	delete[] rooms;
 }
 
 
-void cGame::GeneratePaths()
-{
-	/* Create Paths from room to room
-		->Check for rooms in proximity
-			->if one room is right on top of/to the side of another room create a path regardless of distance
-				->have a random chance to generate paths from the longer paths
-					->create a spider web effect with the paths for more dynamic gameplay
-			->potentially create diagnol paths? if rooms are directly diagnol form one another
-			
-			->check the side to create the path from depending on the room that the path is going to (top, bottom, left, right) 
-				->open a "door" on one side of the room in any position(unless it is a straight path then ensure that it will still be a straight path) 
-				->open a "receiving door" on the room that is being pathed too.
-				->create a corner in the paths then create a path to the corner from each room
-
-		->create walls for the paths
-	*/
-
-	//collision detection logic:
-	/*room->pos.X <= other->pos.X + other->m_iRoomSizeX && room->pos.Y <= other->pos.Y + other->m_iRoomSizeY &&
-				room->pos.X + room->m_iRoomSizeX >= other->pos.X && room->pos.Y + room->m_iRoomSizeY >= other->pos.Y )*/
-	for (int i = 0; i < amountOfRooms; ++i)
-	{
-		cRoom& curr = rooms[i];
-		for (int z = i + 1; z < amountOfRooms; ++z)
-		{
-			cRoom& other = rooms[z];
-
-			int pathX;
-			int pathY;
-
-			//check to make sure no other rooms are in between this one and the other
-			for (int c = 0; c < amountOfRooms; ++c)
-			{
-				cRoom& temp = rooms[i];
-				if (&curr != &temp && &other != &temp)
-				{
-					if (curr.pos.X < temp.pos.X && other.pos.X > temp.pos.X)
-					{
-
-					}
-				}
-			}
-
-			//on top of eachother (straight path qualifies)
-			if (curr.pos.X < other.pos.X + other.m_iRoomSizeX && curr.pos.X + curr.m_iRoomSizeX > other.pos.X)
-			{
-				int minVal = -1;
-				int maxVal = -1;
-				//check to make sure no other rooms are in between this one and the other
-				for (int c = 0; c < amountOfRooms; ++c)
-				{
-					cRoom& temp = rooms[i];
-					if (&curr != &temp && &other != &temp)
-					{
-						if (curr.pos.X + curr.m_iRoomSizeX >= temp.pos.X && curr.pos.X <= temp.pos.X + temp.m_iRoomSizeX &&
-							other.pos.X + other.m_iRoomSizeX >= temp.pos.X && other.pos.X <= temp.pos.X + temp.m_iRoomSizeX)
-						{//temp room is inbetween the two rooms
-							if (temp.pos.X < curr.pos.X || temp.pos.X < other.pos.X)
-							{
-								minVal = temp.pos.X + temp.m_iRoomSizeX;
-							}
-						}
-					}
-				}
-
-				if (curr.pos.X >= other.pos.X)
-				{
-					pathX = RandomNum((minVal == -1) ? curr.pos.X + 1 : minVal, (maxVal == -1) ? other.pos.X + other.m_iRoomSizeX - 1 : maxVal);
-				}
-				else
-				{
-					pathX = RandomNum((minVal == -1) ? other.pos.X + 1 : minVal, (maxVal == -1) ? curr.pos.X + curr.m_iRoomSizeX - 1 : maxVal);
-				}
-
-				//current room is below the other room
-				if (curr.pos.Y < other.pos.Y)
-				{
-					for (int y = curr.pos.Y + curr.m_iRoomSizeY - 1; y <= curr.pos.Y; ++y)
-					{
-						level[(y * m_iSizeX) + pathX - 1].state = '1';
-						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile
-						level[(y * m_iSizeX) + pathX + 1].state = '1';
-					}
-				}
-				else
-				{
-					for (int y = other.pos.Y + other.m_iRoomSizeY - 1; y < curr.pos.Y + 1; ++y)
-					{
-						level[(y * m_iSizeX) + pathX - 1].state = '2';
-						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile 
-						level[(y * m_iSizeX) + pathX + 1].state = '2';
-					}
-				}
-			}
-
-			//beside eachother
-			else if (curr.pos.Y < other.pos.Y + other.m_iRoomSizeY && curr.pos.Y + curr.m_iRoomSizeY > other.pos.Y)
-			{
-				int minVal = -1;
-				int maxVal = -1;
-				//check to make sure no other rooms are in between this one and the other
-				for (int c = 0; c < amountOfRooms; ++c)
-				{
-					cRoom& temp = rooms[i];
-					if (&curr != &temp && &other != &temp)
-					{
-						if (curr.pos.Y + curr.m_iRoomSizeY >= temp.pos.Y && curr.pos.Y <= temp.pos.Y + temp.m_iRoomSizeY &&
-							other.pos.Y + other.m_iRoomSizeY >= temp.pos.Y && other.pos.Y <= temp.pos.Y + temp.m_iRoomSizeY)
-						{//temp room is inbetween the two rooms
-							if (temp.pos.Y < curr.pos.Y || temp.pos.Y < other.pos.Y)
-							{
-								minVal = temp.pos.Y + temp.m_iRoomSizeY;
-							}
-						}
-					}
-				}
-
-				if (curr.pos.Y <= other.pos.Y)
-				{
-					pathY = RandomNum(other.pos.Y + 1, curr.pos.Y + curr.m_iRoomSizeY - 1);
-				}
-				else
-				{
-					pathY = RandomNum(curr.pos.Y + 1, other.pos.Y + other.m_iRoomSizeY - 1);
-				}
-
-				//current room is below the other room
-				if (curr.pos.X < other.pos.X)
-				{
-					for (int x = other.pos.X + other.m_iRoomSizeX - 1; x < curr.pos.X + 1; ++x)
-					{
-						level[(pathY - 1) * m_iSizeX + x].state = '#';
-						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
-						level[(pathY + 1) * m_iSizeX + x].state = '#';
-					}
-				}
-				else
-				{
-					for (int x = other.pos.X + other.m_iRoomSizeX - 1; x < curr.pos.X + 1; ++x)
-					{
-						level[(pathY - 1) * m_iSizeX + x].state = '#';
-						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
-						level[(pathY + 1) * m_iSizeX + x].state = '#';
-					}
-				}
-
-			}
-		}
-	}
-
-	/*cRoom* closestTo = &rooms[0];//dont know what i was thinking
-	int roomsNearBy = 0;
-	for (int i = 1; i < amountOfRooms; ++i)
-	{
-		cRoom* curr = &rooms[i];
-		if ((curr->pos.X * curr->pos.X) + (curr->pos.Y * curr->pos.Y) < (closestTo->pos.X * closestTo->pos.X) + (closestTo->pos.Y * closestTo->pos.Y))
-		{
-			closestTo = &rooms[i];
-		}
-	}*/
-}
-
-//returns false if no collisions are detected
 bool cGame::CheckForRoomCollisions(cRoom* room)
 {
 	for (int i = 0; i < amountOfRooms; ++i)
 	{
 		cRoom* other = &rooms[i];
-		if (room  != other)
-			if (room->pos.X <= other->pos.X + other->m_iRoomSizeX && room->pos.Y <= other->pos.Y + other->m_iRoomSizeY &&
-				room->pos.X + room->m_iRoomSizeX >= other->pos.X && room->pos.Y + room->m_iRoomSizeY >= other->pos.Y )
-			{
+		if (room != other)
+		{
+			if (room->pos.X <= other->pos.X + other->m_iRoomSizeX && room->pos.X + room->m_iRoomSizeX >= other->pos.X 
+				&& room->pos.Y <= other->pos.Y + other->m_iRoomSizeY && room->pos.Y + room->m_iRoomSizeY >= other->pos.Y)
+			{//collision detected
 				return true;
 			}
+		}
 	}
-	
 	return false;
 }
 
+void cGame::GeneratePaths()
+{
+	/* Create Paths from room to room
+		->Check for rooms in proximity --
+			->if one room is right on top of/to the side of another room create a path regardless of distance 
+			->have a random chance to generate paths from the longer paths
+			->create a spider web effect with the paths for more dynamic gameplay
+		->potentially create diagnol paths? if rooms are directly diagnol from one another
 
-/*===============================
-============Path Gen============*/
+		->check the side to create the path from depending on the room that the path is going to (top, bottom, left, right)
+		->open a "door" on one side of the room in any position(unless it is a straight path then ensure that it will still be a straight path)
+		->open a "receiving door" on the room that is being pathed too.
+		->create a corner in the paths then create a path to the corner from each room
 
-void cGame::GenerateStraightPaths()
+		->create walls for the paths
+		*/
+
+	//collision detection logic:
+	/*room->pos.X <= other->pos.X + other->m_iRoomSizeX && room->pos.Y <= other->pos.Y + other->m_iRoomSizeY &&
+				room->pos.X + room->m_iRoomSizeX >= other->pos.X && room->pos.Y + room->m_iRoomSizeY >= other->pos.Y )*/
+
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		cRoom* currentRoom = &rooms[i];
+		std::vector<cRoom*> horPathableRooms = FindValidHorRooms(currentRoom);
+		std::vector<cRoom*> verPathableRooms = FindValidVerRooms(currentRoom);
+
+		std::pair<int, int> range = { 0, 0 };
+		int paths = horPathableRooms.size();
+		for (int i = 0; i < paths; ++i)
+		{
+			cRoom* other = horPathableRooms[i];
+			if (GetHorPathableRange(currentRoom, other, range))
+			{
+				currentRoom->IsConnected = true;
+				other->IsConnected = true;
+				//generate RandomNumber between the range, then put the path into the room
+				int posY = RandomNum(range);
+				for (int x = currentRoom->pos.X + currentRoom->m_iRoomSizeX - 1; x < other->pos.X + 1; ++x)
+				{
+					level[((posY - 1) * m_iSizeX) + x].state = '1';
+					level[(posY * m_iSizeX) + x].state = ' ';
+					level[((posY + 1) * m_iSizeX) + x].state = '2';
+				}
+			}
+		}
+
+		range = { 0, 0 };
+		paths = verPathableRooms.size();
+		for (int i = 0; i < paths; ++i)
+		{
+			cRoom* other = verPathableRooms[i];
+			if (GetVerPathableRange(currentRoom, other, range))
+			{
+				currentRoom->IsConnected = true;
+				other->IsConnected = true;
+				//generate RandomNumber between the range, then put the path into the room
+				int posX = RandomNum(range);
+				for (int y = currentRoom->pos.Y + currentRoom->m_iRoomSizeY - 1; y < other->pos.Y + 1; ++y)
+				{
+					level[(y * m_iSizeX) + posX - 1].state = '3';
+					level[(y * m_iSizeX) + posX].state = ' ';
+					level[(y * m_iSizeX) + posX + 1].state = '4';
+				}
+			}
+		}
+		
+	}
+}
+
+//returns all the rooms that are below the current room and are within the x range to path to
+std::vector<cRoom*> cGame::FindValidVerRooms(cRoom* currentRoom)
+{
+	std::vector<cRoom*> validRooms;
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		cRoom* other = &rooms[i];
+		if (currentRoom != other)
+		{
+			//check if vertical path is possible
+			if (currentRoom->pos.X < other->pos.X + other->m_iRoomSizeX - 2 && currentRoom->pos.X + currentRoom->m_iRoomSizeX > other->pos.X + 2)
+			{
+				if (currentRoom->pos.Y < other->pos.Y)
+				{
+					validRooms.push_back(other);
+				}
+			}
+		}//currRoom != other
+	}//i < amountOfRooms
+	return validRooms;
+}
+
+//returns all the rooms that are to the right of the current room and are withing the the y range to path to
+std::vector<cRoom*> cGame::FindValidHorRooms(cRoom* currentRoom)
+{
+	std::vector<cRoom*> validRooms;
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		cRoom* other = &rooms[i];
+		if (currentRoom != other)
+		{
+			//checks if there is a possible horizontal path
+			if (currentRoom->pos.Y < (other->pos.Y + other->m_iRoomSizeY - 2) && (currentRoom->pos.Y + currentRoom->m_iRoomSizeY) > (other->pos.Y + 2))
+			{
+				//only add it if the room being pathed to is to the right of the current room(prevents multiple paths to the same 2 rooms)
+				if (currentRoom->pos.X < other->pos.X)
+				{
+					//Horizontal path is possible
+					validRooms.push_back(other);
+				}
+			}
+		}//currRoom != other
+	}//i < amountOfRooms
+	return validRooms;
+}
+
+//FOR HORIZONTAL
+//returns true if there is nothing blocking the path, and sets the range that a path can be made in
+bool cGame::GetHorPathableRange(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range)
+{	
+	range.first = (currentRoom->pos.Y <= other->pos.Y)
+		? other->pos.Y + 1 : currentRoom->pos.Y + 1;
+	
+	range.second = (currentRoom->pos.Y + currentRoom->m_iRoomSizeY <= other->pos.Y + other->m_iRoomSizeY)
+		? currentRoom->pos.Y + currentRoom->m_iRoomSizeY - 1 : other->pos.Y + other->m_iRoomSizeY - 1;
+
+	return CheckForHorRoomPathCollisions(currentRoom, other, range);
+}
+
+//FOR VERTICAL
+//returns true if there is nothing blocking the path, and sets the range that a path can be made in
+bool cGame::GetVerPathableRange(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range)
+{
+	range.first = (currentRoom->pos.X <= other->pos.X)
+		? other->pos.X + 1 : currentRoom->pos.X + 1;
+
+	range.second = (currentRoom->pos.X + currentRoom->m_iRoomSizeX <= other->pos.X + other->m_iRoomSizeX)
+		? currentRoom->pos.X + currentRoom->m_iRoomSizeX - 1 : other->pos.X + other->m_iRoomSizeX - 1;
+
+	return CheckForVerRoomPathCollisions(currentRoom, other, range);
+}
+
+
+//returns true if there is nothing completely blocking the horizontal path from the first room to the second, and modifies the range accordingly if a room is partially blocking the path
+bool cGame::CheckForHorRoomPathCollisions(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range)
 {
 	for (int i = 0; i < amountOfRooms; ++i)
 	{
-		int pathX = 0;
-		int pathY = 0;
-		cRoom& curr = rooms[i];
-		for (int z = i + 1; z < amountOfRooms; ++z)
+		cRoom* temp = &rooms[i];
+		if (temp != currentRoom && temp != other)
 		{
-			cRoom& other = rooms[z];
-			if (&curr != &other)
-			{
-				//On top of eachother
-				if (curr.pos.X < other.pos.X + other.m_iRoomSizeX && curr.pos.X + curr.m_iRoomSizeX > other.pos.X)
-				{
-					if (curr.pos.X >= other.pos.X)
-					{
-						pathX = RandomNum(curr.pos.X + 1, other.pos.X + other.m_iRoomSizeX - 1);
+			if (temp->pos.X < other->pos.X && temp->pos.X > currentRoom->pos.X)
+			{//this rooms X value is in between the two other rooms X values so it has a potential to block the path
+				if (temp->pos.Y <= range.second && temp->pos.Y + temp->m_iRoomSizeY >= range.first)
+				{//this room is impeeding on the potential paths
+					if (temp->pos.Y <= range.first && temp->pos.Y + temp->m_iRoomSizeY >= range.second)
+					{//this room completely blocks the current potential paths
+						return false;
+					}
+					else if (temp->pos.Y <= range.first)
+					{//the room is impeeding on the top portion of the possible range
+						range.first = temp->pos.Y + temp->m_iRoomSizeY + 1;
 					}
 					else
-					{
-						pathX = RandomNum(other.pos.X + 1, curr.pos.X + curr.m_iRoomSizeX - 1);
-					}
-				}
-
-				if (curr.pos.Y < other.pos.Y)
-				{
-					for (int y = curr.pos.Y + curr.m_iRoomSizeY - 1; y < other.pos.Y + 1; ++y)
-					{
-						level[(y * m_iSizeX) + pathX - 1].state = '1';
-						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile
-						level[(y * m_iSizeX) + pathX + 1].state = '1';
-					}
-				}
-				else
-				{
-					for (int y = other.pos.Y + other.m_iRoomSizeY - 1; y < curr.pos.Y + 1; ++y)
-					{
-						level[(y * m_iSizeX) + pathX - 1].state = '2';
-						level[(y * m_iSizeX) + pathX].state = ' ';//walkableTile 
-						level[(y * m_iSizeX) + pathX + 1].state = '2';
-					}
-				}
-
-				//beside eachother
-				if (curr.pos.Y < other.pos.Y + other.m_iRoomSizeY && curr.pos.Y + curr.m_iRoomSizeY > other.pos.Y)
-				{
-					if (curr.pos.Y >= other.pos.Y)
-					{
-						pathY = RandomNum(curr.pos.Y + 1, other.pos.Y + other.m_iRoomSizeY - 1);
-					}
-					else
-					{
-						pathY = RandomNum(other.pos.Y + 1, curr.pos.Y + curr.m_iRoomSizeY - 1);
-					}
-				}
-
-				if (curr.pos.X < other.pos.X)
-				{
-					for (int x = curr.pos.X + curr.m_iRoomSizeX - 1; x < other.pos.X + 1; ++x)
-					{
-						level[(pathY - 1) * m_iSizeX + x].state = '3';
-						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
-						level[(pathY + 1) * m_iSizeX + x].state = '3';
-					}
-				}
-				else
-				{
-					for (int x = other.pos.X + other.m_iRoomSizeX - 1; x < curr.pos.X + 1; ++x)
-					{
-						level[(pathY - 1) * m_iSizeX + x].state = '4';
-						level[pathY * m_iSizeX + x].state = ' ';//walkableTile
-						level[(pathY + 1) * m_iSizeX + x].state = '4';
+					{//the room is impeeding on the bottom portion of the possible range
+						range.second = temp->pos.Y - 1;
 					}
 				}
 			}
 		}
 	}
-}
-
-
-void cGame::GenerateCornerPaths()
-{
-	for (int i = 0; i < amountOfRooms; ++i)
-	{
-		cRoom& curr = rooms[i];
-		for (int z = i + 1; z < amountOfRooms; ++z)
-		{
-			cRoom& other = rooms[z];
-			if (&curr != &other)
-			{
-
-			}
-		}
-	}
-}
-
-
-bool CheckForRoomIntersections(cRoom* rooms, int amountOfRooms)
-{
 	return true;
 }
 
+
+
+//returns true if there is nothing completely blocking the horizontal path from the first room to the second, and modifies the range accordingly if a room is partially blocking the path
+bool cGame::CheckForVerRoomPathCollisions(cRoom* currentRoom, cRoom* other, std::pair<int, int>& range)
+{
+	for (int i = 0; i < amountOfRooms; ++i)
+	{
+		cRoom* temp = &rooms[i];
+		if (temp != currentRoom && temp != other)
+		{
+			if (temp->pos.Y < other->pos.Y && temp->pos.Y > currentRoom->pos.Y)
+			{//this rooms Y value is in between the two other rooms Y values so it has a potential to block the path
+				if (temp->pos.X <= range.second && temp->pos.X + temp->m_iRoomSizeX >= range.first)
+				{//this room is impeeding on the path
+					if (temp->pos.X <= range.first && temp->pos.X + temp->m_iRoomSizeX >= range.second)
+					{//this room completely blocks the current path
+						return false;
+					}
+					else if (temp->pos.X <= range.first)
+					{//the room is impeeding on the top portion of the possible range
+						range.first = temp->pos.X + temp->m_iRoomSizeX + 1;
+					}
+					else
+					{//the room is impeeding on the bottom portion of the possible range
+						range.second = temp->pos.X - 1;
+					}
+				}
+			}
+		}
+	}
+	return true;
+}

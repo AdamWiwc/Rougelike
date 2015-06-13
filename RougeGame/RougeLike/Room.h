@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include <windows.h>
+class cPlayer;
 struct Tile
 {
 	Tile() 
@@ -23,10 +24,13 @@ public:
 	~cRoom();
 	void Init(int sizeX, int sizeY);
 	void GenerateRoom();
-	void PutPlayerInRoom();
+	void PutPlayerInRoom(cPlayer& player);
 
 	int m_iRoomSizeX;//x and y size of the current room
 	int m_iRoomSizeY;
+
+	bool IsConnected;
+
 	COORD pos;
 	Tile* m_room;
 private:
