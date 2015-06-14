@@ -36,16 +36,24 @@ public:
 		return level[(y * m_iSizeX) + x];
 	}
 
+	
 	Tile& GetTile(const int xy) const
 	{
 		return level[xy];
 	}
-private:
+
+	Tile* getLevel()
+	{
+		return level;
+	}
 
 	int m_iSizeX;
 	int m_iSizeY;
-	int amountOfRooms;
 	Tile* level; //level
+
+private:
+
+	int amountOfRooms;
 	cRoom* rooms; //array of rooms
 	int m_iMaxRooms;
 	int m_iMinRooms;

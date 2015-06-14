@@ -167,9 +167,19 @@ void cGame::GeneratePaths()
 				int posY = RandomNum(range);
 				for (int x = currentRoom->pos.X + currentRoom->m_iRoomSizeX - 1; x < other->pos.X + 1; ++x)
 				{
-					level[((posY - 1) * m_iSizeX) + x].state = '1';
 					level[(posY * m_iSizeX) + x].state = ' ';
-					level[((posY + 1) * m_iSizeX) + x].state = '2';
+					level[(posY * m_iSizeX) + x].IsPath = true;
+
+
+					if (!level[((posY - 1) * m_iSizeX) + x].IsPath)
+					{
+						level[((posY - 1) * m_iSizeX) + x].state = '1';
+					}
+					
+					if (!level[((posY + 1) * m_iSizeX) + x].IsPath)
+					{
+						level[((posY + 1) * m_iSizeX) + x].state = '2';
+					}
 				}
 			}
 		}
@@ -187,9 +197,18 @@ void cGame::GeneratePaths()
 				int posX = RandomNum(range);
 				for (int y = currentRoom->pos.Y + currentRoom->m_iRoomSizeY - 1; y < other->pos.Y + 1; ++y)
 				{
-					level[(y * m_iSizeX) + posX - 1].state = '3';
 					level[(y * m_iSizeX) + posX].state = ' ';
-					level[(y * m_iSizeX) + posX + 1].state = '4';
+					level[(y * m_iSizeX) + posX].IsPath = true;
+				
+					if (!level[(y * m_iSizeX) + posX - 1].IsPath)
+					{
+						level[(y * m_iSizeX) + posX - 1].state = '3';
+					}
+					
+					if (!level[(y * m_iSizeX) + posX + 1].IsPath)
+					{
+						level[(y * m_iSizeX) + posX + 1].state = '4';
+					}
 				}
 			}
 		}
@@ -288,11 +307,11 @@ bool cGame::CheckForHorRoomPathCollisions(cRoom* currentRoom, cRoom* other, std:
 					}
 					else if (temp->pos.Y <= range.first)
 					{//the room is impeeding on the top portion of the possible range
-						range.first = temp->pos.Y + temp->m_iRoomSizeY + 1;
+						range.first = temp->pos.Y + temp->m_iRoomSizeY;
 					}
 					else
 					{//the room is impeeding on the bottom portion of the possible range
-						range.second = temp->pos.Y - 1;
+						range.second = temp->pos.Y;
 					}
 				}
 			}

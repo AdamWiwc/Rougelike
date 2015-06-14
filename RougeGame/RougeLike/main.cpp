@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "Room.h"
 #include "Player.h"
+#include "LineOfSight.h"
 #include "rouge.h"
 #include "rouge.cpp"
 

@@ -68,5 +68,5 @@ void cRoom::GenerateRoom()
 //puts player in the designated room
 void cRoom::PutPlayerInRoom(cPlayer& player)
 {
-	player.SetCords({rand() % (m_iRoomSizeX - 1) + 1 + pos.X, rand() % (m_iRoomSizeY - 1) + 1 + pos.Y});
+	player.SetCords({rand() % (m_iRoomSizeX - 2) + pos.X, rand() % (m_iRoomSizeY - 2) + 1 + pos.Y});
 }

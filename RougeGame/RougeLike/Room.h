@@ -8,10 +8,12 @@ struct Tile
 	Tile() 
 		: IsVisible(false)
 		, IsRevealed(false)
+		, IsPath(false)
 		, state(' ')
 	{}
 	bool IsVisible;//in current line of sight
 	bool IsRevealed;//has been explored
+	bool IsPath;
 				//Change the default to the walkable floor tile char, or create a flag for walkable and change text color when printing
 	char state; //what state the block is in, IE: enemy, wall, player (What gets printed on the screan)
 };
