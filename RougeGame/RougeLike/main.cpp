@@ -18,7 +18,7 @@ int main()
 	srand(time(NULL));
 
 	cPlayer* player = new cPlayer();
-
+	cLOS* los;
 	GameState.IsInitialized = false;
 	bool32 Running = true;
 	while(Running)
@@ -33,7 +33,7 @@ int main()
 			#define SIZEY 25
 			GameState.CurrentLevel = new cGame(SIZEX, SIZEY);
 			GameState.CurrentLevel->GenerateLevel(*player);
-
+			los = new cLOS(*GameState.CurrentLevel);
 			GameState.IsInitialized = true;
 		}
 
@@ -41,10 +41,11 @@ int main()
 		SetConsoleCursorPosition(hOut, { 0, 0 });
 		PrintStats(&GameState);
 
+		los->SetView(player->GetCords());
 		// NOTE(jesse): Draw the game in the center of the screen
 		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 
-		GameState.CurrentLevel->PrintLevel(*player);
+		GameState.CurrentLevel->PrintLevel(*player, hOut);
 
 		printf("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 		

@@ -9,7 +9,7 @@ class cGame
 {
 public:
 	cGame(int sizeX, int sizeY);
-	void PrintLevel(cPlayer& player);
+	void PrintLevel(cPlayer& player, HANDLE& hOut);
 
 	void GenerateLevel(cPlayer& player);
 	void GeneratePaths();

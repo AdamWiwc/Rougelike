@@ -28,7 +28,7 @@ cGame::cGame(int sizeX, int sizeY)
 }
 
 
-void cGame::PrintLevel(cPlayer& player)
+void cGame::PrintLevel(cPlayer& player, HANDLE& hOut)
 {
 	for (int y = 0; y < m_iSizeY; ++y)
 	{
@@ -40,10 +40,17 @@ void cGame::PrintLevel(cPlayer& player)
 			{
 				printf("%c", player.getCharRep());
 			}
-			else if (true || tile.IsVisible)
+			else if (tile.IsVisible)
 			{
-				tile.IsRevealed = true;
 				printf("%c", tile.state);
+			}
+			else if (tile.IsRevealed && tile.state == '#')
+			{
+				printf("#");
+			}
+			else
+			{
+				printf(" ");
 			}
 		}
 		printf("\n");

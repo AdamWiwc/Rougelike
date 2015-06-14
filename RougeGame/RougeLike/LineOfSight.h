@@ -7,9 +7,8 @@ class cLOS
 {
 public:
 	cLOS(cGame& l);
-	void SetView();
+	void SetView(COORD pPos);
 private:
-	COORD pPos;
 	cGame& game;
 };
 
