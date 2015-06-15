@@ -2,7 +2,8 @@
 #include <conio.h>
 #include <stdio.h>
 #include <string>
-internal void
+
+_internal void
 UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 {
 	// NOTE(jesse): Print Action log at the bottom	
@@ -18,13 +19,13 @@ UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 	GameState->MessageLog += "\n";
 }
 
-internal void
+_internal void
 PrintMessageLog(game_state *GameState)
 {
 	printf("%s", GameState->MessageLog.c_str());
 }
 
-internal void
+_internal void
 ProcessKeyboardInput(game_state *GameState)
 {
 	int32 LastKeyPressed = NULL;
@@ -69,7 +70,7 @@ ProcessKeyboardInput(game_state *GameState)
 	// NOTE(jesse): Add more input here
 }
 
-internal void
+_internal void
 PrintStats(game_state *GameState)
 {
 	// NOTE(jesse): Stats and Health Go at the top of the screen

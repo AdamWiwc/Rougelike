@@ -4,21 +4,20 @@
 #include <string>
 #include <vector>
 
+#include "rouge.h"
+#include "rouge.cpp"
+
 #include "Game.h"
 #include "Room.h"
 #include "Player.h"
 #include "LineOfSight.h"
-#include "rouge.h"
-#include "rouge.cpp"
 
 int main()
 {
 	game_state GameState;
 	HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-	srand(time(NULL));
+	srand((uint32)time(NULL));
 
-	cPlayer* player = new cPlayer();
-	cLOS* los;
 	GameState.IsInitialized = false;
 	bool32 Running = true;
 	while(Running)
@@ -27,13 +26,13 @@ int main()
 		{
 			GameState = {};
 			GameState.MessageLog = ("\n\n\n");
-			GameState.Player;
-
+			GameState.Player = new cPlayer();
 			#define SIZEX 80
 			#define SIZEY 25
 			GameState.CurrentLevel = new cGame(SIZEX, SIZEY);
-			GameState.CurrentLevel->GenerateLevel(*player);
-			los = new cLOS(*GameState.CurrentLevel);
+			GameState.CurrentLevel->GenerateLevel(&GameState);
+			GameState.CurrentLineOfSight = new cLOS(*GameState.CurrentLevel);
+
 			GameState.IsInitialized = true;
 		}
 
@@ -41,11 +40,11 @@ int main()
 		SetConsoleCursorPosition(hOut, { 0, 0 });
 		PrintStats(&GameState);
 
-		los->SetView(player->GetCords());
+		GameState.CurrentLineOfSight->SetView(GameState.Player->GetCords());
 		// NOTE(jesse): Draw the game in the center of the screen
 		printf("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 
-		GameState.CurrentLevel->PrintLevel(*player, hOut);
+		GameState.CurrentLevel->PrintLevel(&GameState, hOut);
 
 		printf("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 		

@@ -8,6 +8,8 @@
 
 #include "Game.h"
 
+struct game_state;
+
 class cEntity
 {
 public:

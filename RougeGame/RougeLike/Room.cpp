@@ -1,5 +1,6 @@
 #include "Room.h"
 #include "Player.h"
+#include "rouge.h"
 #include <stdio.h>
 cRoom::cRoom()
 {
@@ -66,7 +67,7 @@ void cRoom::GenerateRoom()
 }
 
 //puts player in the designated room
-void cRoom::PutPlayerInRoom(cPlayer& player)
+void cRoom::PutPlayerInRoom(game_state *GameState)
 {
-	player.SetCords({rand() % (m_iRoomSizeX - 2) + pos.X, rand() % (m_iRoomSizeY - 2) + 1 + pos.Y});
+	GameState->Player->SetCords({ rand() % (m_iRoomSizeX - 2) + pos.X, rand() % (m_iRoomSizeY - 2) + 1 + pos.Y });
 }

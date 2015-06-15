@@ -2,6 +2,8 @@
 #define LINEOFSIGHT_H
 
 #include <windows.h>
+
+struct game_state;
 class cGame;
 class cLOS
 {

@@ -4,14 +4,15 @@
 #include <vector>
 #include "Room.h"
 
+struct game_state;
 class cPlayer;
 class cGame
 {
 public:
 	cGame(int sizeX, int sizeY);
-	void PrintLevel(cPlayer& player, HANDLE& hOut);
+	void PrintLevel(game_state *GameState, HANDLE& hOut);
 
-	void GenerateLevel(cPlayer& player);
+	void GenerateLevel(game_state *GameState);
 	void GeneratePaths();
 
 	std::vector<cRoom*> FindValidHorRooms(cRoom* currentRoom);

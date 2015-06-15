@@ -1,8 +1,10 @@
 #ifndef ROUGE_H
+#define ROUGE_H
+
 #include <stdint.h>
-#include "Player.h"
+
 // NOTE(jesse): Statics can be many things based on where they are placed, so we define these for ease of use
-#define internal static
+#define _internal static
 #define local_persist static
 #define global_variable static
 
@@ -35,13 +37,21 @@ typedef double real64;
 //
 //
 
+struct Vector2
+{
+	int32 X;
+	int32 Y;
+};
+
+#include "Player.h"
+#include "LineOfSight.h"
+
 struct game_state
 {
 	bool32 IsInitialized;
 	cPlayer *Player;
 	std::string MessageLog;
 	cGame *CurrentLevel;
+	cLOS *CurrentLineOfSight;
 };
-
-#define ROUGE_H
 #endif

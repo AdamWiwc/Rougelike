@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "Game.h"
+#include "rouge.h"
 #include "Player.h"
 
 #include <assert.h>
@@ -28,17 +29,17 @@ cGame::cGame(int sizeX, int sizeY)
 }
 
 
-void cGame::PrintLevel(cPlayer& player, HANDLE& hOut)
+void cGame::PrintLevel(game_state *GameState, HANDLE& hOut)
 {
 	for (int y = 0; y < m_iSizeY; ++y)
 	{
 		for (int x = 0; x < m_iSizeX; ++x)
 		{
-			COORD& pPos = player.GetCords();
+			COORD& pPos = GameState->Player->GetCords();
 			Tile tile = level[(m_iSizeX * y) + x];
 			if (pPos.X == x && y == pPos.Y)
 			{
-				printf("%c", player.getCharRep());
+				printf("%c", GameState->Player->getCharRep());
 			}
 			else if (tile.IsVisible)
 			{
@@ -57,7 +58,7 @@ void cGame::PrintLevel(cPlayer& player, HANDLE& hOut)
 	}
 }
 
-void cGame::GenerateLevel(cPlayer& player)
+void cGame::GenerateLevel(game_state *GameState)
 {
 	amountOfRooms = 5;
 	int sizeX;
@@ -112,7 +113,7 @@ void cGame::GenerateLevel(cPlayer& player)
 		} while (isColliding);//while the room was not placed in the room
 	}
 	GeneratePaths();
-	rooms[0].PutPlayerInRoom(player);//puts player in the first room; 
+	rooms[0].PutPlayerInRoom(GameState);//puts player in the first room; 
 	delete[] rooms;
 }
 

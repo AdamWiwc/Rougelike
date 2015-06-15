@@ -3,6 +3,7 @@
 
 #include <windows.h>
 class cPlayer;
+struct game_state;
 struct Tile
 {
 	Tile() 
@@ -26,7 +27,7 @@ public:
 	~cRoom();
 	void Init(int sizeX, int sizeY);
 	void GenerateRoom();
-	void PutPlayerInRoom(cPlayer& player);
+	void PutPlayerInRoom(game_state *GameState);
 
 	int m_iRoomSizeX;//x and y size of the current room
 	int m_iRoomSizeY;
