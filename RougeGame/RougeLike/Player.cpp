@@ -145,18 +145,15 @@ void cEnemy::TakeDamage(int damage)
 	}
 	return;
 }
-
 void cEnemy::Path(class cGame game)
 {
 
 }
-
 unsigned int cEnemy::GetXp()
 {
 	unsigned int xp = 1 << level;
 	return xp;
 }
-
 unsigned int cEnemy::GetGold()
 {
 	unsigned int gold;
