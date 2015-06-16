@@ -5,7 +5,7 @@
 //	Overall entity stuff
 //-----------------------------------------------------------
 
-void cEntity::Move(byte dir, class cGame game)
+void cEntity::Move(byte dir, class cGame *game)
 {
 	//directions: 1: north, 2: East, 3: South, 4: West
 	COORD newCords = m_Cords;
@@ -13,16 +13,16 @@ void cEntity::Move(byte dir, class cGame game)
 	
 	switch (dir)
 	{
-	case VK_UP:
+	case 1:
 		newCords.Y--;
 		break;
-	case VK_RIGHT:
+	case 2:
 		newCords.X++;
 		break;
-	case VK_DOWN:
+	case 3:
 		newCords.Y++;
 		break;
-	case VK_LEFT:
+	case 4:
 		newCords.X--;
 		break;
 	default:

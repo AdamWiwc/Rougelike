@@ -38,18 +38,22 @@ ProcessKeyboardInput(game_state *GameState)
 		{
 		case 72:
 			// NOTE(jesse): code for arrow up
+			GameState->Player->Move(1, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved North!");
 			break;
 		case 80:
 			// NOTE(jesse): code for arrow down
+			GameState->Player->Move(3, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved South!");
 			break;
 		case 75:
 			// NOTE(jesse): code for arrow right
+			GameState->Player->Move(2, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved West!");
 			break;
 		case 77:
 			// NOTE(jesse): code for arrow left
+			GameState->Player->Move(4, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved East!");
 			break;
 		}
