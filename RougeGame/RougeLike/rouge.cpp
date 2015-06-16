@@ -12,11 +12,11 @@ UpdateMessageLog(game_state *GameState, std::string MessageToHandle)
 #if 1
 	while (MessageToHandle.size() < 80)
 	{
-		MessageToHandle += " ";
+		MessageToHandle.append(" ");
 	}
 #endif
-	GameState->MessageLog += MessageToHandle;
-	GameState->MessageLog += "\n";
+	GameState->MessageLog.append(MessageToHandle);
+	GameState->MessageLog.append("\n");
 }
 
 _internal void
@@ -37,7 +37,7 @@ ProcessKeyboardInput(game_state *GameState)
 		switch (_getch())
 		{
 		case 72:
-			// NOTE(jesse): code for arrow up%
+			// NOTE(jesse): code for arrow up
 			GameState->Player->Move(1, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved North!");
 			break;
@@ -48,12 +48,12 @@ ProcessKeyboardInput(game_state *GameState)
 			break;
 		case 75:
 			// NOTE(jesse): code for arrow right
-			GameState->Player->Move(4, GameState->CurrentLevel);
+			GameState->Player->Move(2, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved West!");
 			break;
 		case 77:
 			// NOTE(jesse): code for arrow left
-			GameState->Player->Move(2, GameState->CurrentLevel);
+			GameState->Player->Move(4, GameState->CurrentLevel);
 			UpdateMessageLog(GameState, "Moved East!");
 			break;
 		}
