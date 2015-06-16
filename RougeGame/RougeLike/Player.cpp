@@ -30,15 +30,11 @@ void cEntity::Move(byte dir, class cGame *game)
 		break;
 	}
 
-	if (true) //check with the map to see if those cors are free.
+	if (game->GetTile(newCords.X, newCords.Y).state != '#') //check with the map to see if those cors are free.
 	{
 		m_Cords = newCords;
 	}
-	else
-	{
-		//maybe add a message system later where we can send a string and it will print it in the event thing
-		//send "Something blocks your way."
-	}
+
 }
 COORD cEntity::GetCords()
 {

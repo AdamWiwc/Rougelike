@@ -181,12 +181,12 @@ void cGame::GeneratePaths()
 
 					if (!level[((posY - 1) * m_iSizeX) + x].IsPath)
 					{
-						level[((posY - 1) * m_iSizeX) + x].state = '1';
+						level[((posY - 1) * m_iSizeX) + x].state = '#';
 					}
 					
 					if (!level[((posY + 1) * m_iSizeX) + x].IsPath)
 					{
-						level[((posY + 1) * m_iSizeX) + x].state = '2';
+						level[((posY + 1) * m_iSizeX) + x].state = '#';
 					}
 				}
 			}
@@ -210,12 +210,12 @@ void cGame::GeneratePaths()
 				
 					if (!level[(y * m_iSizeX) + posX - 1].IsPath)
 					{
-						level[(y * m_iSizeX) + posX - 1].state = '3';
+						level[(y * m_iSizeX) + posX - 1].state = '#';
 					}
 					
 					if (!level[(y * m_iSizeX) + posX + 1].IsPath)
 					{
-						level[(y * m_iSizeX) + posX + 1].state = '4';
+						level[(y * m_iSizeX) + posX + 1].state = '#';
 					}
 				}
 			}
