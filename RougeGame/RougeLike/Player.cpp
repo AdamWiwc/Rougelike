@@ -5,7 +5,7 @@
 //	Overall entity stuff
 //-----------------------------------------------------------
 
-void cEntity::Move(byte dir, class cGame *game)
+bool cEntity::Move(byte dir, class cGame *game)
 {
 	//directions: 1: north, 2: East, 3: South, 4: West
 	COORD newCords = m_Cords;
@@ -33,8 +33,14 @@ void cEntity::Move(byte dir, class cGame *game)
 	if (game->GetTile(newCords.X, newCords.Y).state != '#') //check with the map to see if those cors are free.
 	{
 		m_Cords = newCords;
+		return true;
 	}
-
+    else
+	{
+		//maybe add a message system later where we can send a string and it will print it in the event thing
+		//send "Something blocks your way."
+		return false;
+	}
 }
 COORD cEntity::GetCords()
 {
@@ -141,10 +147,7 @@ void cEnemy::TakeDamage(int damage)
 	}
 	return;
 }
-void cEnemy::Path(class cGame game)
-{
 
-}
 unsigned int cEnemy::GetXp()
 {
 	unsigned int xp = 1 << level;
@@ -156,4 +159,45 @@ unsigned int cEnemy::GetGold()
 	gold = (rand() % 8) * level;
 	return gold;
 
+}
+
+void
+cEnemy::Path(game_state *GameState)
+{
+	bool32 Moved = false;
+
+	COORD PlayerPos = GameState->Player->GetCords();
+	if(abs(PlayerPos.X - PlayerPos.X) < 10 && abs(PlayerPos.Y - PlayerPos.Y) < 10)
+	{
+		if(PlayerPos.X - m_Cords.X > 1 || PlayerPos.Y - m_Cords.Y > 1)
+		{
+			// Attack
+			GameState->Player->TakeDamage(3);
+		}
+		else
+		{
+			// Move
+			uint32 Attempt = 0;
+			while(!Moved && Attempt < 4)
+			{
+				if(m_Cords.Y > PlayerPos.Y)
+				{
+					Moved = Move(1, GameState->CurrentLevel);
+				}
+				else if(m_Cords.X > PlayerPos.X)
+				{
+					Moved = Move(4, GameState->CurrentLevel);
+				}
+				else if(m_Cords.Y < PlayerPos.Y)
+				{
+					Moved = Move(3, GameState->CurrentLevel);
+				}
+				else if(m_Cords.X < PlayerPos.X)
+				{
+					Moved = Move(2, GameState->CurrentLevel);
+				}
+				++Attempt;
+			}
+		}
+	}
 }

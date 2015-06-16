@@ -17,7 +17,7 @@ public:
 	{
 	}
 	~cEntity(){}
-	void Move(byte dir, class cGame *game); //takes a direction and checks if it can move there, if it can, updates plyrCords.
+	bool Move(byte dir, class cGame *game); //takes a direction and checks if it can move there, if it can, updates plyrCords.
 	bool TakeDamage(int damage); //if this returns false, thing is dead. 
 	void Attack(byte dir);
 	COORD GetCords();
@@ -75,7 +75,7 @@ public:
 	~cEnemy()
 	{}
 
-	void Path(class cGame game);
+	void Path(game_state *GameState);
 	void TakeDamage(int damage);
 	unsigned int GetXp();
 	unsigned int GetGold();
