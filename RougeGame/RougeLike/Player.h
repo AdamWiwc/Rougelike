@@ -13,7 +13,7 @@ struct game_state;
 class cEntity
 {
 public:
-	cEntity()
+	cEntity(int h, int d, COORD c, char rep) : m_iHealth(h), m_iDamage(d), m_Cords(c), m_charRep(rep)
 	{
 	}
 	~cEntity(){}
@@ -34,10 +34,11 @@ protected:
 class cPlayer : public cEntity
 {
 public:
-	cPlayer() : m_XP(0), m_level(1), m_gold(0), m_XpToNext(15)
+	cPlayer(int h, int d, COORD c, std::string name) : 
+		cEntity(h, d, c, '@'), 
+		m_maxHealth(h), m_name(name), 
+		m_XP(0), m_XpToNext(15), m_level(1), m_gold(0)
 	{
-		 m_iHealth = m_maxHealth;
-		 m_charRep = '@';
 	}
 	~cPlayer()
 	{}
@@ -68,9 +69,8 @@ class cEnemy : public cEntity
 {
 public:
 
-	cEnemy(int a = 1) : level(a)
+	cEnemy(int h, int d, COORD c, int l) : cEntity(h, d, c, 'G'), level(l)
 	{
-		m_charRep = 'G';
 	}
 	~cEnemy()
 	{}

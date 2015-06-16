@@ -26,7 +26,10 @@ int main()
 		{
 			GameState = {};
 			GameState.MessageLog = ("\n\n\n");
-			GameState.Player = new cPlayer();
+			COORD temp;
+			temp.X = 0;
+			temp.Y = 0;
+			GameState.Player = new cPlayer(100, 2,temp, "Adam");
 			#define SIZEX 80
 			#define SIZEY 25
 			GameState.CurrentLevel = new cGame(SIZEX, SIZEY);
